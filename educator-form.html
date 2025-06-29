@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Educator Lesson Plan Generator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <header class="navbar">
+    <a class="logo" href="index.html">Planuity.AI</a>
+    <nav class="nav-links">
+      <a class="nav-btn" href="login.html">Login</a>
+      <a class="nav-btn primary" href="signup.html">Sign Up</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="left">
+      <h2>Input</h2>
+      <label for="topic">Topic / Subject</label>
+      <input type="text" id="topic" placeholder="e.g. Photosynthesis">
+
+      <label for="grade">Grade / Age Group</label>
+      <input type="text" id="grade" placeholder="e.g. 8th Grade">
+
+      <label for="duration">Lesson Duration (minutes)</label>
+      <input type="number" id="duration" placeholder="e.g. 45">
+
+      <label for="notes">Special Notes or Constraints</label>
+      <textarea id="notes" placeholder="Optional"></textarea>
+
+      <button onclick="generateLesson()">Generate Lesson Plan</button>
+    </div>
+
+    <div class="right">
+      <h2>Generated Lesson Plan</h2>
+      <div id="output" class="output">
+        Your generated lesson plan will appear here.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 🔑 SET YOUR API KEY HERE
+    const API_KEY = "AIzaSyBjmiHwpwLEXRVaIbiLTCLc8the5ohe8eQ";
+
+    // 🔗 BASE ENDPOINT WITH KEY
+    const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`;
+
+    async function generateLesson() {
+      const topic = document.getElementById('topic').value.trim();
+      const grade = document.getElementById('grade').value.trim();
+      const duration = document.getElementById('duration').value.trim();
+      const notes = document.getElementById('notes').value.trim();
+
+      if (!topic || !grade || !duration) {
+        alert("Please fill in Topic, Grade, and Duration.");
+        return;
+      }
+
+      const prompt = `
+You are an expert educator creating a lesson plan.
+- Topic: ${topic}
+- Grade / Age Group: ${grade}
+- Lesson Duration: ${duration} minutes
+- Special Notes: ${notes || "None"}
+
+Please write a detailed, structured lesson plan.
+      `;
+
+      document.getElementById('output').textContent = "Generating lesson plan...";
+
+      try {
+        const res = await fetch(ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }]
+          })
+        });
+
+        const data = await res.json();
+        if (data && data.candidates && data.candidates.length > 0) {
+          document.getElementById('output').textContent = data.candidates[0].content.parts[0].text;
+        } else {
+          document.getElementById('output').textContent = "No response generated.";
+        }
+      } catch (err) {
+        console.error(err);
+        document.getElementById('output').textContent = "Error generating lesson plan.";
+      }
+    }
+  </script>
+
+</body>
+</html>
