@@ -1,14 +1,10 @@
-// student.js
-
-// Define your API key here ONCE
 const API_KEY = "AIzaSyBjmiHwpwLEXRVaIbiLTCLc8the5ohe8eQ";
 
-// Endpoint for Gemini 1.5 Flash (change if needed)
 const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`;
 
-// Attach click listener to button
+
 document.getElementById('generate-btn').addEventListener('click', async () => {
-  // Get input values
+
   const topic = document.getElementById('topic').value.trim();
   const time = document.getElementById('time').value.trim();
   const grade = document.getElementById('grade').value.trim();
@@ -22,7 +18,6 @@ document.getElementById('generate-btn').addEventListener('click', async () => {
     return;
   }
 
-  // Build prompt for AI
   const prompt = `
 You are an expert study coach.
 Create a detailed day-by-day study plan for:
@@ -36,11 +31,10 @@ Create a detailed day-by-day study plan for:
 Provide an evenly distributed schedule with daily tasks.
 `;
 
-  // Show loading text
   planOutput.textContent = "Generating study plan... Please wait.";
 
   try {
-    // Call Gemini API
+  
     const response = await fetch(ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
